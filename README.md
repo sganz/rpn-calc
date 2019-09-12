@@ -1,4 +1,5 @@
 # rpn-calc
+![hp11c_rpn-calc-sm](https://user-images.githubusercontent.com/5179047/64802172-ed73f900-d53e-11e9-8834-b638c75158d3.jpg)
 
 This is a NodeJS project to build out a bunch of random 'stuff' around the common 
 RPN (Reverse Polish Notation) Calculator. The idea was to start with basic 
