@@ -1,12 +1,22 @@
 # rpn-calc
+
 ![hp11c_rpn-calc-sm](https://user-images.githubusercontent.com/5179047/64802172-ed73f900-d53e-11e9-8834-b638c75158d3.jpg)
 
-This is a NodeJS project to build out a bunch of random 'stuff' around the common 
-RPN (Reverse Polish Notation) Calculator. The idea was to start with basic 
+This is a NodeJS project to build out a bunch of random 'stuff' around the common
+RPN (Reverse Polish Notation) Calculator. The idea was to start with basic
 calculator functionality as a class and go from that point adding new things as I go.
 
-The project is not designed to be a calculator but a learning tool for picking up
-Javascript/Node.
+The project is not designed to be a clone of a HP calculator but a learning tool for picking up
+Javascript/Node and surrounding technologies. If you want to try an online version of the HP RPN calculators
+here is one -
+
+http://hp15c.com
+
+And the related github project
+
+https://github.com/ghewgill/hp15c
+
+---
 
 Here is my task list that I would like to do
 
@@ -17,9 +27,23 @@ Here is my task list that I would like to do
 - Document code with JSDoc like structure to be able to have docs!
 - i18n integration for language, possibly numbers
 - Winston Logging
-- Sequalize to do user tracking or some such use
+- Sequelize to do user tracking or some such use of a database
 - ExpressJS to expose it as a service
 - Phase 2 would be build a front end with multiple tools like Vue and React
+
+---
+
+Here are the current list of scripts that can run and what they do -
+
+- docs - Run JSDocs, with enable private tags
+- tests - Run Jest, with coverage report
+- more coming soon!
+
+To run these do something like -
+
+> \$ npm run docs
+>
+> \$ npm run tests
 
 ---
 
@@ -27,9 +51,9 @@ The core of the project was stolen from the numerous courseware/bootcamp project
 floating around the web, and mainly just the idea for the basic calculator class.
 
 This project will not be anything expected to be functionally useful other than
-learning how to do things. 
+learning how to do things.
 
-Feel free to offer suggestions, coding tips, and contribute if you find yourself 
+Feel free to offer suggestions, coding tips, and contribute if you find yourself
 having time to waste or want something to do until the next season of Rick and Morty
 comes out.
 

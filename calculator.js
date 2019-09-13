@@ -3,7 +3,10 @@
  * @classdesc Basic RPN calculator functionality. Supports the basic
  * operators and a few specialized functions. Most all methods can
  * throw an Error exception and possibly a RangeError based on user
- * input.
+ * input how some of the math functions fail.
+ *
+ * The for more understanding how a RPN calculator works check out the
+ * various sites on the interwebs.
  */
 class Calculator {
   /**
@@ -225,6 +228,16 @@ class Calculator {
   }
 
   /**
+   * Changes the sign of the x register (top of stack). Does not
+   * modify anything else.
+   */
+  chs() {
+    // have to do the math otherwise a -0 value can slip though
+
+    this.enter(0 - this._stack.pop());
+  }
+
+  /**
    * Private helper function to perform a recursive
    * factorial. Assumes input is in order. If used
    * incorrectly can cause a stack overflow (RangeError).
@@ -295,5 +308,4 @@ class Calculator {
   }
 }
 
-console.log('abc', 'dab', 'acc');
 module.exports = Calculator;
