@@ -14,6 +14,7 @@ Here is my task list that I would like to do
 - Build out a rpn calculator service
 - Add a bunch of HP Calculator functionality like the HP11C as I have one
 - TDD/Unit Testing with Jest
+- Document code with JSDoc like structure to be able to have docs!
 - i18n integration for language, possibly numbers
 - Winston Logging
 - Sequalize to do user tracking or some such use

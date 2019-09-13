@@ -1,8 +1,10 @@
 {
   "scripts": {
-    "test": "jest"
+    "test": "jest",
+    "docs": "jsdoc *.js -p"
   },
   "devDependencies": {
+    "eslint": "^6.3.0",
     "jest": "^24.9.0",
     "jsdoc": "^3.6.3",
     "typedoc": "^0.15.0"
@@ -26,5 +28,8 @@
     "Javascript"
   ],
   "author": "Sandy Ganz",
-  "license": "WTFPL"
+  "license": "WTFPL",
+  "jest": {
+    "collectCoverage": true
+  }
 }

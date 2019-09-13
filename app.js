@@ -34,3 +34,6 @@ calc.factorial();
 
 console.log('lastX ' + calc.lastX());
 console.log(calc.value());
+
+calc.clearAll()
+calc.plus();

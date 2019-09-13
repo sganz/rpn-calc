@@ -8,33 +8,45 @@ describe('RPN Calculator Class', () => {
             expect(calc.pop()).toBe(0);
         });
 
-        test('Empty exception test', () => {
+        test('Fresh Size test', () => {
             const calc = new Calculator;
-            calc.pop();
-            expect(() => calc.pop()).toThrow(Error);
+            expect(calc.depth()).toBe(calc._minStack);
         });
     });
 
     describe('Missing Operands', () => {
         test('Missing Plus Operand', () => {
             const calc = new Calculator;
-            expect(() => calc.plus()).toThrow(Error);
+            calc.plus();
+            expect(calc.value()).toBe(0);
         });
         test('Missing Minus Operand', () => {
             const calc = new Calculator;
-            expect(() => calc.minus()).toThrow(Error);
+            calc.minus();
+            expect(calc.value()).toBe(0);
         });
         test('Missing Times Operand', () => {
             const calc = new Calculator;
-            expect(() => calc.times()).toThrow(Error);
+            calc.times();
+            expect(calc.value()).toBe(0);
         });
         test('Missing Divide Operand', () => {
             const calc = new Calculator;
             expect(() => calc.divide()).toThrow(Error);
         });
+        test('Missing Factoria Operand', () => {
+            const calc = new Calculator;
+            calc.factorial();
+            expect(calc.value()).toBe(1);
+        });
+        test('Missing Times Operand', () => {
+            const calc = new Calculator;
+            calc.sqrt();
+            expect(calc.value()).toBe(0);
+        });
     });
 
-    describe('Operators', () => {
+    describe('Single Operators', () => {
         const calc = new Calculator;
 
         test('Plus Positives', () => {
@@ -108,14 +120,10 @@ describe('RPN Calculator Class', () => {
             expect(() => calc.divide()).toThrow(Error);
             expect(calc.depth()).toBe(stackDepth - 1);
         });
+    });
 
-        test('Divide by nan', () => {
-            calc.clX();
-            calc.pop(); // empty stack
-            expect(() => calc.divide()).toThrow(Error);
-            expect(calc.depth()).toBe(0);
-        });
-
+    describe('Function Operators', () => {
+        const calc = new Calculator;
         test('Factorial', () => {
             calc.enter(5);
             calc.factorial();
@@ -128,16 +136,15 @@ describe('RPN Calculator Class', () => {
             expect(calc.pop()).toBe(1);
         });
 
+        test('Factorial - Negative Value', () => {
+            calc.enter(-8);
+            expect(() => calc.factorial()).toThrow(Error);
+        });
+
         test('Factorial - Float Value', () => {
             calc.enter(5.1234);
             calc.factorial();
             expect(calc.pop()).toBe(120);
-        });
-
-        test('Factorial - nan Value', () => {
-            calc.clX();
-            calc.pop();
-            expect(() => calc.factorial()).toThrow(Error);
         });
 
         test('Factorial - Fractional Number Value', () => {
@@ -147,22 +154,49 @@ describe('RPN Calculator Class', () => {
             expect(calc.pop()).toBe(1);
         });
 
+        test('Square Root Perfect Square', () => {
+            calc.enter(9);
+            calc.sqrt();
+            expect(calc.pop()).toBe(3);
+        });
+
+        test('Square Root Not Perfect Square', () => {
+            calc.enter(7);
+            calc.sqrt();
+            expect(calc.pop()).toBe(Math.sqrt(7));
+        });
+
+        test('Square Root Negative', () => {
+            calc.enter(-7);
+            expect(() => calc.sqrt()).toThrow(Error);
+            expect(calc.lastX()).toBe(-7);
+        });
     });
 
     describe('Stack Check', () => {
         test('Constructor Initial Stack', () => {
             const calc = new Calculator;
-            expect(calc.depth()).toBe(1);
+            expect(calc.depth()).toBe(calc._minStack);
             expect(calc.pop()).toBe(0);
         });
 
-        test('Empty Stack - By clearing (clX)', () => {
+        test('Empty Stack - By clearing (clearAll)', () => {
             const calc = new Calculator;
             calc.enter(123);
             calc.enter(456);
-            calc.clX();
+            calc.clearAll();
             expect(calc.pop()).toBe(0);
-            expect(calc.depth()).toBe(0);
+            expect(calc.depth()).toBe(calc._minStack);
+        });
+
+        test('Pop To Empty Stack', () => {
+            const calc = new Calculator;
+            expect(calc.depth()).toBe(calc._minStack);
+            for (let i = 0; i < calc._minStack + 1; i++) {
+                expect(calc.pop()).toBe(0);
+            }
+
+            expect(calc.depth()).toBe(calc._minStack);
         });
 
         test('Stack Correct (pop)', () => {
@@ -170,15 +204,15 @@ describe('RPN Calculator Class', () => {
             calc.enter(123);
             calc.enter(456);
             calc.enter(789);
-            expect(calc.depth()).toBe(4);
+            expect(calc.depth()).toBe(calc._minStack + 3);
             expect(calc.pop()).toBe(789);
-            expect(calc.depth()).toBe(3);
+            expect(calc.depth()).toBe(calc._minStack + 2);
             expect(calc.pop()).toBe(456);
-            expect(calc.depth()).toBe(2);
+            expect(calc.depth()).toBe(calc._minStack + 1);
             expect(calc.pop()).toBe(123);
-            expect(calc.depth()).toBe(1);
+            expect(calc.depth()).toBe(calc._minStack);
             expect(calc.pop()).toBe(0);
-            expect(calc.depth()).toBe(0);
+            expect(calc.depth()).toBe(calc._minStack);
         });
     });
 
@@ -261,7 +295,7 @@ describe('RPN Calculator Class', () => {
     describe('Memory Register Checks', () => {
         test('Initial State', () => {
             const calc = new Calculator;
-            for(let i = 0; i < calc._memory.length; i++){
+            for (let i = 0; i < calc._memory.length; i++) {
                 expect(calc.rcl(i)).toBe(0);
             }
         });
@@ -269,43 +303,54 @@ describe('RPN Calculator Class', () => {
         test('Store and Recall Memory Values', () => {
             const calc = new Calculator;
             // set them all sequentially
-            for(let i = 0; i < calc._memory.length; i++){
+            for (let i = 0; i < calc._memory.length; i++) {
                 calc.enter(i);
                 calc.sto(i);
             }
 
             // check sequentially
-            for(let i = 0; i < calc._memory.length; i++){
+            for (let i = 0; i < calc._memory.length; i++) {
                 expect(calc.rcl(i)).toBe(i);
             }
         });
 
         test('Ensure ClearAll Resets', () => {
             const calc = new Calculator;
-            for(let i = 0; i < calc._memory.length; i++){
+            for (let i = 0; i < calc._memory.length; i++) {
                 calc.enter(i);
                 calc.sto(i);
             }
-            
+
             calc.clearAll();
 
-            for(let i = 0; i < calc._memory.length; i++){
+            for (let i = 0; i < calc._memory.length; i++) {
                 expect(calc.rcl(i)).toBe(0);
             }
         });
 
         test('Ensure clX Doesn\'t Reset', () => {
             const calc = new Calculator;
-            for(let i = 0; i < calc._memory.length; i++){
+            for (let i = 0; i < calc._memory.length; i++) {
                 calc.enter(i);
                 calc.sto(i);
             }
 
             calc.clX();
 
-            for(let i = 0; i < calc._memory.length; i++){
+            for (let i = 0; i < calc._memory.length; i++) {
                 expect(calc.rcl(i)).toBe(i);
             }
         });
+
+        test('Recall Invalid Register - Index Too Large', () => {
+            const calc = new Calculator;
+                expect(() => calc.rcl(1000)).toThrow(Error);
+        });
+ 
+        test('Store Invalid Register - Index Too Large', () => {
+            const calc = new Calculator;
+                expect(() => calc.sto(1000)).toThrow(Error);
+        });
+ 
     });
 });
