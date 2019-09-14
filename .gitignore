@@ -60,5 +60,5 @@ typings/
 # next.js build output
 .next
 
-# Logging from Winston 
-out/
+# JSDocs 
+docs/
