@@ -1,15 +1,17 @@
 {
   "scripts": {
     "test": "jest",
-    "docs": "jsdoc *.js -p"
+    "docs": "jsdoc *.js -p -d docs",
+    "docstrap": "jsdoc -p -c ./jsdoc.conf.json -t ./node_modules/ink-docstrap/template -R README.md *.js -d docs"
   },
   "devDependencies": {
     "eslint": "^6.3.0",
     "jest": "^24.9.0",
     "jsdoc": "^3.6.3",
-    "typedoc": "^0.15.0"
+    "ink-docstrap": "^1.3.2"
   },
   "dependencies": {
+    "express": "^4.17.1",
     "i18n-2": "^0.7.3",
     "winston": "^3.2.1",
     "winston-daily-rotate-file": "^4.1.0"

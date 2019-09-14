@@ -1,3 +1,6 @@
+const MINIMUM_STACK = 3;
+const MAXIMUM_STACK = 25;
+
 /**
  * @class
  * @classdesc Basic RPN calculator functionality. Supports the basic
@@ -19,15 +22,12 @@ class Calculator {
    * 0-2 are really the X, Y, and T registers respectively. In no circumstances
    * will these registers ever be invalid (NaN) or missing from the stack.
    *
-   * @property _minStack {number} The minimum number of elements in the stack
-   * before back filling with 0 elements.
    * @property _stack {array} An array used as a stack data structure
    * @property _lastX is the last X register value. Typically saved off before being
    * popped but an operator.
    * @property _memory is the 10 register memory array
    */
   constructor() {
-    this._minStack = 3;
     this._stack = [0, 0, 0];
     this._lastX = 0;
     this._memory = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
@@ -81,6 +81,15 @@ class Calculator {
    * @throws {Error} Will throw if not a number
    */
   enter(value) {
+    // Keep from ever having a runaway stack, so if full, toss
+
+    if (this.depth() >= MAXIMUM_STACK) {
+      throw new Error('Stack is full');
+    }
+
+    // nothing other than a number should be pushed. This
+    // might be something more strict in the future
+
     if (!this._isNumeric(value)) {
       throw new Error('You have entered an invalid number');
     }
@@ -100,11 +109,9 @@ class Calculator {
     let xReg = this._stack.pop();
 
     // now we need to check the stack size. Since we always
-    // want the stack to have at least 3 (x register, y register, t register)
-    // we will append one IF we have a stack depth of 2 after the
-    // pop
+    // want the stack to have at least MINIMUM_STACK depth
 
-    if (this.depth() == 2) {
+    if (this.depth() < MINIMUM_STACK) {
       this._stack.unshift(0);
     }
 
@@ -165,7 +172,7 @@ class Calculator {
     this._stack.length = 0;
 
     // stuff the stack to mimic always needed registers
-    for (let i = 0; i < this._minStack; i++) {
+    for (let i = 0; i < MINIMUM_STACK; i++) {
       this._stack.push(0);
     }
 
@@ -270,11 +277,11 @@ class Calculator {
   factorial() {
     const intVal = parseInt(this.pop(), 10);
 
-    // always set the lastX in case of exception (HP11C)
+    // always set the lastX in case of exception (HP1https://github.com/sganz/rpn-calcC)
 
     this._lastX = intVal;
 
-    // check for some reasonable values (could put and upper cap too)
+    // check for some reasonable values (could put anhttps://github.com/sganz/rpn-calc upper cap too)
 
     if (intVal < 0) {
       throw new Error('Negative numbers invalid for Factorial');
@@ -299,7 +306,6 @@ class Calculator {
     let sq = Math.sqrt(xReg);
 
     // catches negative and other bad things
-
     if (xReg < 0 || isNaN(sq)) {
       throw new Error('Negative numbers invalid for Square Root');
     }
@@ -308,4 +314,8 @@ class Calculator {
   }
 }
 
-module.exports = Calculator;
+module.exports = {
+  Calculator: Calculator,
+  MINIMUM_STACK: MINIMUM_STACK,
+  MAXIMUM_STACK: MAXIMUM_STACK,
+};

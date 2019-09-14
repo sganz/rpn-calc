@@ -1,4 +1,4 @@
-const Calculator = require('./calculator.js');
+const { Calculator, MAXIMUM_STACK, MINIMUM_STACK } = require('./calculator.js');
 
 describe('RPN Calculator Class', () => {
   describe('Testing newly constructed object', () => {
@@ -9,7 +9,7 @@ describe('RPN Calculator Class', () => {
 
     test('Fresh Size test', () => {
       const calc = new Calculator();
-      expect(calc.depth()).toBe(calc._minStack);
+      expect(calc.depth()).toBe(MINIMUM_STACK);
     });
   });
 
@@ -33,7 +33,7 @@ describe('RPN Calculator Class', () => {
       const calc = new Calculator();
       expect(() => calc.divide()).toThrow(Error);
     });
-    test('Missing Factoria Operand', () => {
+    test('Missing Factorial Operand', () => {
       const calc = new Calculator();
       calc.factorial();
       expect(calc.value()).toBe(1);
@@ -191,7 +191,7 @@ describe('RPN Calculator Class', () => {
   describe('Stack Check', () => {
     test('Constructor Initial Stack', () => {
       const calc = new Calculator();
-      expect(calc.depth()).toBe(calc._minStack);
+      expect(calc.depth()).toBe(MINIMUM_STACK);
       expect(calc.pop()).toBe(0);
     });
 
@@ -201,17 +201,30 @@ describe('RPN Calculator Class', () => {
       calc.enter(456);
       calc.clearAll();
       expect(calc.pop()).toBe(0);
-      expect(calc.depth()).toBe(calc._minStack);
+      expect(calc.depth()).toBe(MINIMUM_STACK);
     });
 
     test('Pop To Empty Stack', () => {
       const calc = new Calculator();
-      expect(calc.depth()).toBe(calc._minStack);
-      for (let i = 0; i < calc._minStack + 1; i++) {
+      expect(calc.depth()).toBe(MINIMUM_STACK);
+      for (let i = 0; i < MINIMUM_STACK + 1; i++) {
         expect(calc.pop()).toBe(0);
       }
 
-      expect(calc.depth()).toBe(calc._minStack);
+      expect(calc.depth()).toBe(MINIMUM_STACK);
+    });
+
+    test('Check Stack Overflow', () => {
+      const calc = new Calculator();
+
+      // Fill Stack 100%
+      for (let i = 0; i < MAXIMUM_STACK - MINIMUM_STACK; i++) {
+        calc.enter(i);
+      }
+
+      // Break the camels back
+      expect(calc.depth()).toBe(MAXIMUM_STACK);
+      expect(() => calc.enter(9999)).toThrow(Error);
     });
 
     test('Stack Correct (pop)', () => {
@@ -219,15 +232,15 @@ describe('RPN Calculator Class', () => {
       calc.enter(123);
       calc.enter(456);
       calc.enter(789);
-      expect(calc.depth()).toBe(calc._minStack + 3);
+      expect(calc.depth()).toBe(MINIMUM_STACK + 3);
       expect(calc.pop()).toBe(789);
-      expect(calc.depth()).toBe(calc._minStack + 2);
+      expect(calc.depth()).toBe(MINIMUM_STACK + 2);
       expect(calc.pop()).toBe(456);
-      expect(calc.depth()).toBe(calc._minStack + 1);
+      expect(calc.depth()).toBe(MINIMUM_STACK + 1);
       expect(calc.pop()).toBe(123);
-      expect(calc.depth()).toBe(calc._minStack);
+      expect(calc.depth()).toBe(MINIMUM_STACK);
       expect(calc.pop()).toBe(0);
-      expect(calc.depth()).toBe(calc._minStack);
+      expect(calc.depth()).toBe(MINIMUM_STACK);
     });
   });
 
