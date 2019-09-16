@@ -1,8 +1,8 @@
 'use strict';
 
-const i18n = require('./i18n');
-const logger = require('./logger');
-const Calc = require('./calculator.js');
+const i18n = require('./src/i18n/i18n.js');
+const logger = require('./src/logger/logger.js');
+const Calc = require('./src/rpn-calc/calculator.js');
 
 logger.info('Calc v1.0');
 logger.debug('Some Debugging');

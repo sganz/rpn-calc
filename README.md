@@ -6,6 +6,8 @@ This is a NodeJS project to build out a bunch of random 'stuff' around the commo
 RPN (Reverse Polish Notation) Calculator. The idea was to start with basic
 calculator functionality as a class and go from that point adding new things as I go.
 
+[GitHub rpn-calc Repository](https://github.com/sganz/rpn-calc)
+
 The project is not designed to be a clone of a HP calculator but a learning tool for picking up
 Javascript/Node and surrounding technologies. If you want to try an online version of the HP RPN calculators
 here is one -
@@ -22,6 +24,7 @@ Here is my task list that I would like to do
 
 - Learn more Node/JS
 - Build out a rpn calculator service
+- build a project structure that makes sense _(NEW 09/16/2019)_
 - Add a bunch of HP Calculator functionality like the HP11C as I have one
 - TDD/Unit Testing with Jest
 - Document code with JSDoc and fancy output with DocStrap like structure to be able to have docs!

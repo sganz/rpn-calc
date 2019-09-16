@@ -1,8 +1,8 @@
 {
   "scripts": {
     "test": "jest",
-    "docs": "jsdoc *.js -p -d docs",
-    "docstrap": "jsdoc -p -c ./jsdoc.conf.json -t ./node_modules/ink-docstrap/template -R README.md *.js -d docs"
+    "docs": "jsdoc ./src/ -r -p -d docs",
+    "docstrap": "jsdoc -p -c ./jsdoc.conf.json -t ./node_modules/ink-docstrap/template -R README.md ./src -r -d docs"
   },
   "devDependencies": {
     "eslint": "^6.3.0",
