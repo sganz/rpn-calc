@@ -26,7 +26,7 @@ Here is my task list that I would like to do
 - Build out a rpn calculator service
 - build a project structure that makes sense _(NEW 09/16/2019)_
 - Add a bunch of HP Calculator functionality like the HP11C as I have one
-- TDD/Unit Testing with Jest
+- TDD/Unit Testing with Jest or try Fast-Check Property Based Testing (https://github.com/dubzzz/fast-check)
 - Document code with JSDoc and fancy output with DocStrap like structure to be able to have docs!
 - i18n integration for language, possibly numbers
 - Winston Logging and log rolling with winston extension
@@ -48,6 +48,7 @@ Some of these may be installed globally (npm -g option, see specific package for
 
 - eslint
 - jest
+- fast-check
 - jsdoc
 - ink-docstrap
 
@@ -57,6 +58,7 @@ Some of these may be installed globally (npm -g option, see specific package for
 - winston
 - winston-daily-rotate-file
 - express
+- nunjucks templating engine (Pick your favorite, express supports many)
 
 If something is missing here LQQK in the `package.json` file
 
