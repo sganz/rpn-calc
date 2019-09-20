@@ -1,5 +1,12 @@
 const { Calculator, MAXIMUM_STACK, MINIMUM_STACK } = require('./calculator.js');
 
+// bring in fast-check. This is only needed if fact-check is used otherwise
+// remove the require() and just use jest alone. Fast-check is used within
+// jest test() so they are complimentary if the need be. Don't know much
+// more than that as yet. Fast-check code at the end of the file
+
+const fc = require('fast-check');
+
 describe('RPN Calculator Class', () => {
   describe('Testing newly constructed object', () => {
     test('Initial Pop test', () => {
@@ -378,6 +385,37 @@ describe('RPN Calculator Class', () => {
     test('Store Invalid Register - Index Too Large', () => {
       const calc = new Calculator();
       expect(() => calc.sto(1000)).toThrow(Error);
+    });
+  });
+
+  // here are the fast-check property based tests
+
+  describe('Fast-Check', () => {
+    test('FC Zero Result if operands the Same', () => {
+      const calc = new Calculator();
+      fc.assert(
+        fc.property(fc.integer(), a => {
+          calc.clearAll();
+          calc.enter(a);
+          calc.enter(a);
+          calc.minus();
+          return calc.value() == 0;
+        }),
+      );
+    });
+
+    test('FC Adding positive Numbers for both operands always a positive number', () => {
+      const calc = new Calculator();
+      fc.assert(
+        fc.property(fc.float(0.001, 100), fc.float(0.0, 100), (a, b) => {
+          calc.clearAll();
+          calc.enter(a);
+          calc.enter(b);
+          calc.plus();
+          return calc.value() > 0.0;
+        }),
+        { verbose: true },
+      );
     });
   });
 });
