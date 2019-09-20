@@ -1,0 +1,8 @@
+{% extends "index.njx" %}
+
+{# This is comment #}
+{% block content %}
+    <h1>{{title}}</h1>
+    {# apply custom function and next build-in and custom filters #}
+    {{ myFunc(smthVar) | lower | myFilter(5, 'abc') }} 
+{% endblock %}
