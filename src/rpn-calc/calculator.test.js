@@ -395,7 +395,7 @@ describe('RPN Calculator Class', () => {
       const calc = new Calculator();
       fc.assert(
         fc.property(fc.integer(), a => {
-          calc.clearAll();
+          calc.clearAll(); // will avoid any stack overflow issues
           calc.enter(a);
           calc.enter(a);
           calc.minus();

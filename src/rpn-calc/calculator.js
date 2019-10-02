@@ -57,6 +57,8 @@ class Calculator {
   /**
    * Returns the depth of the stack. This is
    * really the size of the array, not much more.
+   *
+   * @returns {number} The depth of the stack
    */
   depth() {
     return this._stack.length;
