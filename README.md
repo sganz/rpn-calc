@@ -3,7 +3,19 @@
 ![hp11c_rpn-calc-sm](https://user-images.githubusercontent.com/5179047/64802172-ed73f900-d53e-11e9-8834-b638c75158d3.jpg)
 
 This is a NodeJS project to build out a bunch of random 'stuff' around the common
-RPN (Reverse Polish Notation) Calculator. **(Can anyone expand on this??)**
+RPN (Reverse Polish Notation) Calculator.
+
+RPN is a mathematical notation where the operators (+, -, *, etc.) follow the objects
+being operated on. Like its name suggests, it is the reverse of Polish Notation where the operators _precede_ the objects being operated on.
+
+Some examples of this notation:
+```
+1 1 + // equivalent to 1 + 1
+
+3 5 * 2 - // equivalent to (3 * 5) - 2
+
+1 2 3 + - // equivalent to 1 - (2 + 3)
+```
 
 The idea was to start with basic
 calculator functionality as a class and go from that point adding new things as I go.
