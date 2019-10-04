@@ -279,11 +279,11 @@ class Calculator {
   factorial() {
     const intVal = parseInt(this.pop(), 10);
 
-    // always set the lastX in case of exception (HP1https://github.com/sganz/rpn-calcC)
+    // always set the lastX in case of exception
 
     this._lastX = intVal;
 
-    // check for some reasonable values (could put anhttps://github.com/sganz/rpn-calc upper cap too)
+    // check for some reasonable values (could put an upper cap too)
 
     if (intVal < 0) {
       throw new Error('Negative numbers invalid for Factorial');
