@@ -388,7 +388,8 @@ describe('RPN Calculator Class', () => {
     });
   });
 
-  // here are the fast-check property based tests
+  // here are the fast-check property based tests will overlap
+  // with some of the above but the idea is to try these out too!
 
   describe('Fast-Check', () => {
     test('FC Zero Result if operands the Same', () => {
@@ -413,6 +414,29 @@ describe('RPN Calculator Class', () => {
           calc.enter(b);
           calc.plus();
           return calc.value() > 0.0;
+        }),
+        { verbose: true },
+      );
+    });
+
+    test('FC Test chs() operator (change sign of X reg)', () => {
+      const calc = new Calculator();
+      fc.assert(
+        fc.property(fc.float(), a => {
+          calc.clearAll();
+          calc.enter(a);
+          calc.chs();
+
+          // not sure if this is a good way to test but lets see
+          // since the range can but from negative, 0 to positive.
+          // Seems like their might be a better way to do this as the
+          // case here is just like 3 simple unit tests!
+
+          if (a < 0) {
+            return calc.value() > 0.0;
+          } else if (a > 0) {
+            return calc.value() < 0.0;
+          } else return a == 0;
         }),
         { verbose: true },
       );
