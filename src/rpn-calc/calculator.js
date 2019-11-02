@@ -308,6 +308,7 @@ class Calculator {
     let sq = Math.sqrt(xReg);
 
     // catches negative and other bad things
+
     if (xReg < 0 || isNaN(sq)) {
       throw new Error('Negative numbers invalid for Square Root');
     }

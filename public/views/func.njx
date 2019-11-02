@@ -4,5 +4,6 @@
 {% block content %}
     <h1>{{title}}</h1>
     {# apply custom function and next build-in and custom filters #}
-    {{ myFunc(smthVar) | lower | myFilter(5, 'abc') }} 
+    Piping from one function to the next: <strong>{{ myFunc(smthVar) | lower | myFilter(5, 'abc') }}</strong><br>
+    Simple - Nunjucks Function: <strong>{{myFunc('should be all uppercase!')}}</strong>
 {% endblock %}

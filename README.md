@@ -5,10 +5,11 @@
 This is a NodeJS project to build out a bunch of random 'stuff' around the common
 RPN (Reverse Polish Notation) Calculator.
 
-RPN is a mathematical notation where the operators (+, -, *, etc.) follow the objects
+RPN is a mathematical notation where the operators (+, -, \*, etc.) follow the objects
 being operated on. Like its name suggests, it is the reverse of Polish Notation where the operators _precede_ the objects being operated on.
 
 Some examples of this notation:
+
 ```
 1 1 + // equivalent to 1 + 1
 
@@ -45,7 +46,10 @@ Here is my task list that I would like to do
 - i18n integration for language, possibly numbers
 - Winston Logging and log rolling with winston extension
 - Sequelize to do user tracking or some such use of a database
-- ExpressJS to expose it as a service
+- Express to expose it as a rest service and related web interface
+- express-winston for logging to winston
+- express-promise-router for allowing routes to return promises (far off for this one)
+- Open Zipkin for distributed logging, supports express, run server as a docker container. Interesting
 - Phase 2 would be build a front end with multiple tools like Vue and React
 
 ---
@@ -69,12 +73,28 @@ Some of these may be installed globally (npm -g option, see specific package for
 ### App Dependencies
 
 - i18n-2
+- http-status
 - winston
 - winston-daily-rotate-file
+- axios
 - express
+- express-winston
+- cookie-parser
+- method-override
 - nunjucks templating engine (Pick your favorite, express supports many)
+- opentracing
+- zipkin (www.openzipkin.io)
+- zipkin-instrumentation-express
+- zipkin-instrumentation-axios
+- zipkin-context-cls
+- zipkin-transport-http
+- zipkin-axios
+- node-fetch (needed for zipkin)
+- express-opentracing (Jaeger)
+- axios-opentracing (Jaeger)
+- jaeger-client
 
-If something is missing here LQQK in the `package.json` file
+If something is missing here (likely I forgot to update the docs!) LQQK in the `package.json` file
 
 > TIP : use the `npm install --save <package_name>` to auto-magically add it into your package.json
 
@@ -92,6 +112,12 @@ To run these do something like -
 > \$ npm run docs
 >
 > \$ npm run tests
+
+---
+
+To start up the zipkin container. Check the zipkin docs for more info -
+
+> docker run -d -p 9411:9411 openzipkin/zipkin
 
 ---
 

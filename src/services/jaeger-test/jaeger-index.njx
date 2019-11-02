@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html>
+<head>
+ {% block head %}
+ <title>Jaeger Test</title>
+ {% endblock %}
+</head>
+<body>
+ {% block body %}
+ <h1>Jaeger Test Page</h1>
+ {% block content %}
+  This test page will make a call to an express service that will in turn 
+  make a call to the main app that has a /time endpoint. The /time service will
+  delay 100ms and return the time as a JSON package. Once you hit this page
+  go back to the Jaeger service web page and take a look.
+  <br><br>Time service at {{service}}
+  <hr>The Time : {{time}}
+  <br>Status : {{status}}
+  {% endblock %}
+ {% endblock %}
+</body>
+</html>
