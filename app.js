@@ -236,8 +236,10 @@ app.get('/ping', async (req, res, next) => {
   }
 });
 
-// These should be last
-
+// Helper to map error codes to human codes
+// returns a status string and a class of error.
+// These are things that should be direclty used by
+// i18n
 const mapErrorStatus = status => {
   return {
     statusStr: httpStatus[status],
@@ -245,12 +247,28 @@ const mapErrorStatus = status => {
   };
 };
 
-////// LEFT OFF HERE 404 Not routing to default error for some reason
+// anything here will be caught by this 404 handler. Currently
+// this is using the same template as the 500's. Add a distinct
+// one if the need arises.
+app.use(function(req, res, next) {
+  const status = 404;
+  const expandedStatus = mapErrorStatus(status);
+
+  res.status(status);
+  res.render('errors.njx', {
+    status: status,
+    title: `${status}: ` + req.i18n.__(expandedStatus.statusStr),
+    explain: expandedStatus.statusClass,
+  });
+  logger.info(expandedStatus.statusClass);
+  logger.info(status + ' 404 Page Called');
+});
 
 // And anything that falls though here will get the
 // current error.status or a catch all 500.
 // This goes to a generic single template. This may or
-// may not be good if 404 and 500 pages need to be very different
+// may not be good if 404 and 500 pages need to be different
+
 app.use((error, req, res, next) => {
   const status = error.status || 500;
   res.status(status);
