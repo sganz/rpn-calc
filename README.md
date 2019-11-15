@@ -39,17 +39,17 @@ Here is my task list that I would like to do
 
 - Learn more Node/JS
 - Build out a rpn calculator service
-- build a project structure that makes sense _(NEW 09/16/2019)_
+- build a project structure that makes sense
 - Add a bunch of HP Calculator functionality like the HP11C as I have one
 - TDD/Unit Testing with Jest or try Fast-Check Property Based Testing (https://github.com/dubzzz/fast-check)
 - Document code with JSDoc and fancy output with DocStrap like structure to be able to have docs!
-- i18n integration for language, possibly numbers
-- Winston Logging and log rolling with winston extension
+- (in process) i18n integration for language, possibly numbers
+- (in process) Winston Logging and log rolling with winston extension
 - Sequelize to do user tracking or some such use of a database
-- Express to expose it as a rest service and related web interface
-- express-winston for logging to winston
+- (in process) Express to expose it as a rest service and related web interface
 - express-promise-router for allowing routes to return promises (far off for this one)
-- Open Zipkin for distributed logging, supports express, run server as a docker container. Interesting
+- (in process)Opentrace / Jaeger tracing
+- ???
 - Phase 2 would be build a front end with multiple tools like Vue and React
 
 ---
@@ -104,20 +104,25 @@ Here are the current list of scripts that can run and what they do -
 
 - `docs` - Run JSDocs, with enable private tags
 - `docstrap` - Run JSDocs with the DocStrap plug in
-- `tests` - Run Jest, with coverage report
+- `test` - Run Jest, with coverage report
 - more coming soon!
 
 To run these do something like -
 
 > \$ npm run docs
 >
-> \$ npm run tests
+> \$ npm run test
 
 ---
 
 To start up the zipkin container. Check the zipkin docs for more info -
 
 > docker run -d -p 9411:9411 openzipkin/zipkin
+
+To start up the Jaeger container, also check docs. This starts up the container
+such that the instance will also handle the zipkin collector protocol.
+
+> docker run -d --name jaeger -e COLLECTOR_ZIPKIN_HTTP_PORT=9411 -p 5775:5775/udp -p 6831:6831/udp -p 6832:6832/udp -p 5778:5778 -p 16686:16686 -p 14268:14268 -p 9411:9411 jaegertracing/all-in-one:1.8
 
 ---
 
