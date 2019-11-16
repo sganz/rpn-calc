@@ -23,9 +23,11 @@ const i18n = require('i18n-2');
 const i18nConfig = require('./src/i18n/i18n.js').i18nConfig;
 const httpStatus = require('http-status');
 const logger = require('./src/logger/logger.js');
+const tracer = require('./src/tracing/tracing.js');
+
 const methodOverride = require('method-override');
 const express = require('express');
-//var session = require('cookie-session');
+var session = require('cookie-session');
 var cookieParser = require('cookie-parser');
 const router = express.Router();
 const favicon = require('serve-favicon');
@@ -35,9 +37,7 @@ const morgan = require('morgan');
 // Import axios and axios instrumentation
 
 const axios = require('axios');
-
 const expressOpentracing = require('express-opentracing').default;
-const { initTracer } = require('jaeger-client');
 const createAxiosTracing = require('axios-opentracing').default;
 
 // Get needed env or defaults
@@ -48,32 +48,6 @@ const COOKIE_NAME_LOCALE = process.env.COOKIE_NAME_LOCALE || 'locale';
 
 // This is the the test service running in src/services/jaeger-another-service.js
 const JAEGER_API_SERVICE_ENDPOINT = process.env.API_ENDPOINT || 'http://localhost:4000';
-
-// Pull in Jaeger stuff from environment, default if needed (Set yours if different)
-const JAEGER_COLLECTOR_ENDPOINT =
-  process.env.JAEGER_COLLECTOR_ENDPOINT || 'http://localhost:14268/api/traces';
-const JAEGER_SERVICE_NAME = process.env.JAEGER_SERVICE_NAME || 'app.js';
-const JAEGER_AGENT_HOST = process.env.JAEGER_AGENT_HOST || 'localhost';
-const JAEGER_AGENT_PORT = process.env.JAEGER_AGENT_PORT || '6831';
-
-// Tracing Config, most should come from env settings
-
-const config = {
-  serviceName: JAEGER_SERVICE_NAME,
-  sampler: {
-    type: 'const',
-    param: 1,
-  },
-  reporter: {
-    collectorEndpoint: JAEGER_COLLECTOR_ENDPOINT,
-    agentHost: JAEGER_AGENT_HOST,
-    agentPort: JAEGER_AGENT_PORT,
-    logSpans: true,
-  },
-};
-
-// Setup tracer
-const tracer = initTracer(config);
 
 // Create tracing interceptor
 const applyTracingInterceptors = createAxiosTracing(tracer);
@@ -102,17 +76,17 @@ const app = express();
 // And attach helper methods for use in templates
 // This bugs me a bit since we have a global object config.
 // Might be a better way to export the config to both.
-
 i18n.expressBind(app, i18nConfig);
 
-// Should come up earl on the use list
-// From method-override - Lets you use HTTP verbs such as PUT or DELETE in places where the client doesn't support it.
+// Should come up early on the use list
+// From method-override - Lets you use HTTP verbs such as PUT or DELETE
+// in places where the client doesn't support it.
 app.use(methodOverride());
 
-// Setup express tracer middleware
+// Setup express tracer middleware, Opentracing
 app.use(expressOpentracing({ tracer }));
 
-// NOTE ROUTER USE
+// NOTE : ROUTER.USE
 // set a cookie with some max age and http only so scripts can't get them
 router.use(function(req, res, next) {
   // check if existing in the dict
@@ -134,7 +108,7 @@ router.use(function(req, res, next) {
 // Our Server Port
 const port = 3000;
 
-// recommended if not default
+// recommended if not already a default
 app.disable('x-powered-by');
 
 // set up favicon path. Icon is in the images directory
@@ -151,6 +125,29 @@ app.use(expressOpentracing({ tracer }));
 
 // need cookieParser middleware before we can do anything with cookies
 app.use(cookieParser());
+
+///////////////// left off here ///////////////////////
+// working on setting up session cookies where I could
+// potentially stuff a rpn-calc object (json) to keep the state
+// might be a really bad idea, but would be fun to try
+// until server side state could be done to a db or related store.
+// get the cookie session going
+//
+// L@@K - NEED BETTER UNDERSTANDING OF WHAT IT'S DOING!!
+app.use(
+  cookieSession({
+    name: 'rpn-calc-session',
+    keys: ['key1', 'key2'],
+  }),
+);
+
+// Might not be right, but going to create an rpn-calc if needed
+
+app.use(function(req, res, next) {
+  var n = req.session.views || 0;
+  req.session.views = n++;
+  res.end(n + ' views');
+});
 
 // This is how you'd set a locale from req.cookies.
 // Don't forget to set the cookie either on the client or in your Express app.
@@ -181,16 +178,17 @@ var njEnv = nunjucks.configure(['public/views/'], {
   autoescape: true,
   express: app,
   cache: false,
-  watch: true, // need chokidar package to work
+  watch: true, // need chokidar package to automatically pick up template changes
 });
 
+// Register a Nunjucks filter, currently just a pass through
 njEnv.addFilter('myFilter', function(obj, arg1, arg2) {
   logger.info('Nunjucks - myFilter()', obj, arg1, arg2);
   // Do something with obj, check with Nunjucks docs for info
   return obj;
 });
 
-// Nunjucks function to upper case
+// Register a Nunjucks function to upper case
 njEnv.addGlobal('myFunc', (obj, arg1) => {
   logger.info('Nunjucks - myFunc()', obj.toUpperCase(), arg1);
   return obj.toUpperCase();
@@ -201,6 +199,7 @@ app.use(router);
 
 // Set up Morgan logging format based on environment
 app.use(morgan(env === 'development' ? 'tiny' : 'short', { stream: logger.stream }));
+
 // This should cause an exception, not sure if it's currently working
 // as it's tossing an exception that is not handled ????
 app.get('/error', function(req, res, next) {
@@ -225,7 +224,7 @@ app.get('/time', async (req, res) => {
   res.json({ currentDate: new Date().getTime() });
 });
 
-// will call the zipkin service which returns the time then send back pong
+// will call the tracing (Jaeger) service which returns the time then send back pong
 app.get('/ping', async (req, res, next) => {
   try {
     // go back to the same service for it's time
@@ -247,21 +246,19 @@ const mapErrorStatus = status => {
   };
 };
 
-// anything here will be caught by this 404 handler. Currently
-// this is using the same template as the 500's. Add a distinct
-// one if the need arises.
-app.use(function(req, res, next) {
-  const status = 404;
-  const expandedStatus = mapErrorStatus(status);
+// If you want to collect a 404 and map to the express
+// error handler use something like this. This will set up
+// and error and then cause it to bubble up to the real
+// error handler. Only the status will be used to get
+// the message, exception string won't. Otherwise just
+// make your last regular middleware to render the template
+// and not pass the error along.
 
-  res.status(status);
-  res.render('errors.njx', {
-    status: status,
-    title: `${status}: ` + req.i18n.__(expandedStatus.statusStr),
-    explain: expandedStatus.statusClass,
-  });
-  logger.info(expandedStatus.statusClass);
-  logger.info(status + ' 404 Page Called');
+app.use((req, res, next) => {
+  const error = new Error('Page Not found');
+  error.status = 404;
+  logger.error('No routes found, Sending to common error handler');
+  next(error);
 });
 
 // And anything that falls though here will get the
@@ -279,8 +276,8 @@ app.use((error, req, res, next) => {
     title: `${status}: ` + req.i18n.__(expandedStatus.statusStr),
     explain: expandedStatus.statusClass,
   });
-  logger.info(expandedStatus.statusClass);
-  logger.info(status + ' Error Page Called');
+  logger.error(expandedStatus.statusClass);
+  logger.error(status + ' Error Page Rendered');
 });
 
 // Jaeger collector should be started with something like (Zipkin collector also enabled)-
