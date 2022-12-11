@@ -17,7 +17,7 @@
     "axios-opentracing": "^0.1.3",
     "chokidar": "^3.3.0",
     "cookie-parser": "^1.4.4",
-    "express": "^4.17.1",
+    "express": "^4.17.3",
     "express-jaeger": "0.0.16",
     "express-opentracing": "^0.1.1",
     "express-winston": "^4.0.1",
